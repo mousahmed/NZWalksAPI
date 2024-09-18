@@ -49,6 +49,61 @@ namespace NZWalksAPI.Controllers
             };
             return Ok(regionDto);
         }
+        [HttpPost]
+        public IActionResult Create([FromBody] AddRegionRequestDto addRegionRequestDto)
+        {
+            Region region = new Region
+            {
+                Code = addRegionRequestDto.Code,
+                Name = addRegionRequestDto.Name,
+                RegionImageUrl = addRegionRequestDto.RegionImageUrl
+            };
+            _dbContext.Regions.Add(region);
+            _dbContext.SaveChanges();
+
+            RegionDto regionDto = new RegionDto
+            {
+                Id = region.Id,
+                Code = region.Code,
+                Name = region.Name,
+                RegionImageUrl = region.RegionImageUrl
+            };
+            return CreatedAtAction(nameof(GetRegion), new { id = regionDto.Id }, regionDto);
+        }
+        [HttpPut("{id}")]
+        public IActionResult Update(Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
+        {
+            Region region = _dbContext.Regions.Find(id);
+            if (region == null)
+            {
+                return NotFound();
+            }
+            region.Code = updateRegionRequestDto.Code;
+            region.Name = updateRegionRequestDto.Name;
+            region.RegionImageUrl = updateRegionRequestDto.RegionImageUrl;
+            _dbContext.SaveChanges();
+
+            RegionDto regionDto = new RegionDto
+            {
+                Id = region.Id,
+                Code = region.Code,
+                Name = region.Name,
+                RegionImageUrl = region.RegionImageUrl
+            };
+            return Ok(regionDto);
+        }
+        [HttpDelete("{id}")]
+        public IActionResult Remove(Guid id)
+        {
+            Region region = _dbContext.Regions.Find(id);
+            if (region == null)
+            {
+                return NotFound();
+            }
+            _dbContext.Regions.Remove(region);
+            _dbContext.SaveChanges();
+            return Ok();
+        }
     }
  
 }
