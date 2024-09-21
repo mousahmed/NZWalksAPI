@@ -56,7 +56,7 @@ namespace NZWalksAPI.Data
                 new Difficulty
                 {
                     Id = new Guid("b3b3e6e1-1b36-4b0e-8e4b-6b4f3f1b3f6b"),
-                    Name = "Moderate",
+                    Name = "Medium",
                 },
                 new Difficulty
                 {
