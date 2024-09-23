@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NZWalksAPI.Data;
 using NZWalksAPI.Models.Domain;
+using System.Globalization;
 
 namespace NZWalksAPI.Repositories
 {
@@ -40,13 +41,53 @@ namespace NZWalksAPI.Repositories
                 .FirstOrDefaultAsync(x => x.Id == walkId);
         }
 
-        public async Task<List<Walk>> GetAllAsync()
+        public async Task<List<Walk>> GetAllAsync(string? filterOn = null,
+            string? filterQuery = null,
+            string? sortBy = null,
+            bool? isAscending = false,
+            int? pageNumber = 1,
+            int? pageSize = 1000)
         {
-            List<Walk> walks = await _dbContext.Walks
-                .Include("Difficulty")
-                .Include("Region")
-                .ToListAsync();
-            return walks;
+            var allowedFilterColumns = new List<string> { "Name", "Description" };
+            var allowdSortColumns = new List<string> { "Name", "LenghtInKm" };
+            var walks = _dbContext.Walks
+                 .Include("Difficulty")
+                 .Include("Region")
+                 .AsQueryable();
+            if (!string.IsNullOrWhiteSpace(filterOn) &&
+                !string.IsNullOrWhiteSpace(filterQuery)
+                )
+            {
+                if (allowedFilterColumns.Contains(filterOn))
+                {
+                    walks = walks.Where(x => EF.Property<string>(x, filterOn).Contains(filterQuery));
+                }
+
+
+            }
+         
+            if (!string.IsNullOrWhiteSpace(sortBy) && !string.IsNullOrWhiteSpace(isAscending.ToString()))
+            {
+                if (allowdSortColumns.Contains(sortBy))
+                {
+                    if (isAscending == true)
+                    {
+                        walks = walks.OrderBy(x => EF.Property<string>(x, sortBy));
+                    }
+                    else
+                    {
+                        walks = walks.OrderByDescending(x => EF.Property<string>(x, sortBy));
+                    }
+                }
+            }
+
+            if (pageNumber.HasValue && pageSize.HasValue)
+            {
+                walks = walks.Skip((pageNumber.Value - 1) * pageSize.Value).Take(pageSize.Value);
+            }
+
+
+            return await walks.ToListAsync();
         }
 
         public async Task<Walk?> UpdateAsync(Guid id, Walk walk)

@@ -22,9 +22,20 @@ namespace NZWalksAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? filterOn,
+            [FromQuery] string? filterQuery,
+            [FromQuery] string? sortBy,
+            [FromQuery] bool? isAscending = false,
+            [FromQuery] int? pageNumber = 1,
+            [FromQuery] int? pageSize = 1000)
         {
-            List<Walk> walks = await _walkRepository.GetAllAsync();
+            List<Walk> walks = await _walkRepository.GetAllAsync(
+                filterOn,
+                filterQuery,
+                sortBy,
+                isAscending,
+                pageNumber,
+                pageSize);
 
             List<WalkDto> walkDtos = _mapper.Map<List<WalkDto>>(walks);
 
@@ -47,7 +58,7 @@ namespace NZWalksAPI.Controllers
         [ValidateModelAttributes]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDto addWalkRequestDto)
         {
-            
+
             Walk walk = _mapper.Map<Walk>(addWalkRequestDto);
             await _walkRepository.CreateAsync(walk);
 
@@ -59,7 +70,7 @@ namespace NZWalksAPI.Controllers
         [ValidateModelAttributes]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateWalkRequestDto updateWalkRequestDto)
         {
-            
+
             Walk? walk = _mapper.Map<Walk>(updateWalkRequestDto);
 
             walk = await _walkRepository.UpdateAsync(id, walk);
