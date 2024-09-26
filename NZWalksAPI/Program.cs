@@ -16,8 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 DotEnv.Load();
 
 // Build the connection string using environment variables
-string APPLICATION_DB = Environment.GetEnvironmentVariable("SQLSERVER_DB");
-string APPLICATION_AUTH_DB = Environment.GetEnvironmentVariable("SQLSERVER_AUTH_DB");
+string? APPLICATION_DB = Environment.GetEnvironmentVariable("SQLSERVER_DB");
+string? APPLICATION_AUTH_DB = Environment.GetEnvironmentVariable("SQLSERVER_AUTH_DB");
 
 var connectionString = (string SQLSERVER_DB) =>
 {
