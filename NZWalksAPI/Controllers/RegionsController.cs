@@ -13,7 +13,7 @@ namespace NZWalksAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Reader")]
     public class RegionsController : ControllerBase
     {
         private readonly IRegionRepository _regionRepository;
@@ -45,6 +45,7 @@ namespace NZWalksAPI.Controllers
         }
         [HttpPost]
         [ValidateModelAttributes]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             Region region = _mapper.Map<Region>(addRegionRequestDto);
@@ -55,6 +56,7 @@ namespace NZWalksAPI.Controllers
         }
         [HttpPut("{id}")]
         [ValidateModelAttributes]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
 
@@ -71,6 +73,7 @@ namespace NZWalksAPI.Controllers
             return Ok(regionDto);
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Remove(Guid id)
         {
             Boolean isDeleted = await _regionRepository.RemoveAsync(id);
