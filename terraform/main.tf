@@ -7,10 +7,10 @@ resource "aws_lambda_function" "dotnet_lambda" {
   function_name = "dotnet-walks-api"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "LambdaEntryPoint::LambdaEntryPoint.Function::FunctionHandlerAsync" # Change to your handler
-  runtime       = "dotnetcore8.0"
+  runtime       = "dotnet8"
   timeout       = 15
 
-  s3_bucket = aws_s3_bucket.lambda_deployments.bucket
+  s3_bucket = "ncs-deployments"
   s3_key    = "lambda/dotnet-api.zip" # Upload your zipped deployment here
 
   environment {
@@ -39,6 +39,7 @@ resource "aws_rds_cluster" "aurora" {
 
 resource "aws_rds_cluster_instance" "aurora_instance" {
   count              = 1
+  engine             = "aurora-postgresql"
   identifier         = "aurora-instance-${count.index}"
   cluster_identifier = aws_rds_cluster.aurora.id
   instance_class     = "db.serverless"
