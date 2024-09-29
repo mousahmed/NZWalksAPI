@@ -38,7 +38,7 @@ jobs:
 
     # Step 7: Upload the zip to S3
     - name: Upload Lambda package to S3
-      run: aws s3 cp lambda-api.zip s3://your-s3-bucket-name/lambda/dotnet-api.zip
+      run: aws s3 cp lambda-api.zip s3://ncs-deployments/lambda/dotnet-api.zip
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
