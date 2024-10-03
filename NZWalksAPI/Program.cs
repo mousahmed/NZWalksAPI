@@ -23,21 +23,21 @@ string? APPLICATION_AUTH_DB = Environment.GetEnvironmentVariable("SQLSERVER_AUTH
 
 var connectionString = (string SQLSERVER_DB) =>
 {
-    return string.Format(
-    "Server={0},{1};Database={2};User Id={3};Password={4};TrustServerCertificate=True;",
-    Environment.GetEnvironmentVariable("SQLSERVER_HOST"),
-    Environment.GetEnvironmentVariable("SQLSERVER_PORT"),
-    SQLSERVER_DB,
-    Environment.GetEnvironmentVariable("SQLSERVER_USER"),
-    Environment.GetEnvironmentVariable("SQLSERVER_PASSWORD")
-    );
+  return string.Format(
+  "Server={0},{1};Database={2};User Id={3};Password={4};TrustServerCertificate=True;",
+  Environment.GetEnvironmentVariable("SQLSERVER_HOST"),
+  Environment.GetEnvironmentVariable("SQLSERVER_PORT"),
+  SQLSERVER_DB,
+  Environment.GetEnvironmentVariable("SQLSERVER_USER"),
+  Environment.GetEnvironmentVariable("SQLSERVER_PASSWORD")
+  );
 };
 
 builder.Services.Configure<JwtSettings>(options =>
 {
-    options.Key = Environment.GetEnvironmentVariable("JWT_SECRET");
-    options.Issuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
-    options.Audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+  options.Key = Environment.GetEnvironmentVariable("JWT_SECRET");
+  options.Issuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+  options.Audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
 });
 
 builder.Services.AddControllers();
@@ -51,16 +51,16 @@ builder.Services.AddDbContext<ApplicationAuthDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "NZ Walks API", Version = "v1" });
-    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = JwtBearerDefaults.AuthenticationScheme
-    });
+  options.SwaggerDoc("v1", new OpenApiInfo { Title = "NZ Walks API", Version = "v1" });
+  options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+  {
+    Name = "Authorization",
+    In = ParameterLocation.Header,
+    Type = SecuritySchemeType.ApiKey,
+    Scheme = JwtBearerDefaults.AuthenticationScheme
+  });
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+  options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -91,32 +91,34 @@ builder.Services.AddIdentityCore<IdentityUser>()
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    options.Password.RequiredLength = 6;
+  options.Password.RequiredLength = 6;
 });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
-            ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")))
-        };
+      options.TokenValidationParameters = new TokenValidationParameters
+      {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+        ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+        IssuerSigningKey = new SymmetricSecurityKey(
+              Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")))
+      };
     });
+
+builder.Services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+  app.UseSwagger();
+  app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
