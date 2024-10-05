@@ -37,9 +37,9 @@ resource "aws_iam_role_policy" "lambda_exec_policy" {
 resource "aws_lambda_function" "dotnet_lambda" {
   function_name = "dotnet-walks-api"
   role          = aws_iam_role.lambda_exec.arn
+  handler       = "NZWalksAPI"
   runtime       = "dotnet8"
   timeout       = 15
-
   s3_bucket = "ncs-deployments"
   s3_key    = "lambda/dotnet-api.zip" # Upload your zipped deployment here
 
