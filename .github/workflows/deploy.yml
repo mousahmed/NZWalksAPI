@@ -30,12 +30,11 @@ jobs:
 
       # Step 5: Publish the .NET project to a directory
       - name: Publish the .NET project
-        run: dotnet publish -c Release -o ./output
+        run: dotnet publish -c Release -r linux-arm64 -o publish
 
       # Step 6: Zip the output for Lambda
       - name: Zip the output folder
-        run: zip -r lambda-api.zip ./output
-
+        run: zip -r lambda-api.zip ./publish
       # Step 7: Upload the zip to S3
       - name: Upload Lambda package to S3
         run: aws s3 cp lambda-api.zip s3://ncs-deployments/lambda/dotnet-api.zip
